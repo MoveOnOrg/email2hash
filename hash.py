@@ -3,10 +3,9 @@
 """Read a CSV file and hash the email addresses.
 
 This script reads a CSV file, hashes the email addresses using a cryptographic
-hash function (configurable) and then outputs the hashes to another file. The
-default hash function is SHA1 but SHA256 and BLAKE2 are also supported via the
-arguments. The script will output some execution information (line count, time
-taken and output file name) by default unless the --silent flag is specified.
+hash function (SHA3-256) and then outputs the hashes to another file.  The
+script will output some execution information (line count, time taken and
+output file name) by default unless the --silent flag is specified.
 """
 
 import os
@@ -18,13 +17,6 @@ import argparse
 
 def hash_email(args):
     in_file, out_file = args.file, args.output
-
-    hashes = {
-            "sha1": hashlib.sha1,
-            "sha256": hashlib.sha256,
-            "blake2s": hashlib.blake2s,
-            "blake2b": hashlib.blake2b
-            }
 
     # We note the executation start time; this is helpful for profiling.
     start_time = time.time()
@@ -59,7 +51,7 @@ def hash_email(args):
             # don't need the overhead and it performs a lot worse.
             for index, line in enumerate(f, 1):
                 email = line.split(",")[email_index].strip()
-                email_hash = hashes[args.hash]()
+                email_hash = hashlib.sha3_256()
                 email_hash.update(email.encode("utf-8"))
                 out.write(email_hash.hexdigest() + "\n")
     except IOError:
@@ -71,7 +63,7 @@ def hash_email(args):
 
     if not args.silent:
         print("Hashed {0} email addresses in {1:0.2f} seconds using {2} "
-              "to {3}".format(index, end_time - start_time, args.hash,
+              "to {3}".format(index, end_time - start_time, "SHA3-256",
                               os.path.abspath(out_file)))
 
 
@@ -89,11 +81,6 @@ def parse_args():
             metavar="out-file",
             help="output file with hashed email addresses"
             )
-    parser.add_argument(
-            "--hash",
-            choices=("sha1", "sha256", "blake2s", "blake2b"),
-            default="sha256",
-            help="cryptographic hash function (default: %(default)s)")
     parser.add_argument(
             "--silent",
             action="store_true",
