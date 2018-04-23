@@ -36,19 +36,18 @@ For all supported options, run the script with `-h`:
 
 ```
 $ python3 hash.py -h
-usage: hash.py [-h] [-o out-file] [--silent] in-file
+usage: hash.py [-h] [-o hash-file] [--silent] csv-file
 
 Read a CSV file and hash the email addresses.
 
 positional arguments:
-  in-file               input csv file with email addresses
+  csv-file              input csv file with email addresses
 
 optional arguments:
   -h, --help            show this help message and exit
-  -o out-file, --output out-file
+  -o hash-file, --output hash-file
                         output file with hashed email addresses
   --silent              run in silent mode
-
 ```
 
 ###### Profiling

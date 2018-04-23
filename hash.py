@@ -73,12 +73,12 @@ def parse_args():
             )
     parser.add_argument(
             "file",
-            metavar="in-file",
+            metavar="csv-file",
             help="input csv file with email addresses"
             )
     parser.add_argument(
             "-o", "--output",
-            metavar="out-file",
+            metavar="hash-file",
             help="output file with hashed email addresses"
             )
     parser.add_argument(
