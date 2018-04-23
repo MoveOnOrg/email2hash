@@ -52,7 +52,7 @@ optional arguments:
 
 ###### Profiling
 
-For a input file with 6400360 records (file size 378MB), the execution times on an Intel i5 2.30 GHz machine:
+For an input file (378MB) with 6400360 records, the execution times on an Intel i5 2.30 GHz machine:
 
     Hashed 6400359 email addresses in 16.06 seconds using SHA3-256 to ...
 
