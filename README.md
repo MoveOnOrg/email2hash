@@ -56,7 +56,7 @@ optional arguments:
 
 ##### Hash
 
-You can specify a different hash (the default is `SHA-256`) with the `--hash' argument; the supported hashes are `SHA-1`, `SHA-256`, `BLAKE2s`, `BLAKE2b`. 
+You can specify a different hash (the default is `SHA-256`) with the `--hash` argument; the supported hashes are `SHA-1`, `SHA-256`, `BLAKE2s`, `BLAKE2b`.
 
 ```
 $ python3 hash.py --hash sha1 test.csv 
@@ -107,13 +107,14 @@ a4da62dfc9863e10758f5e4300cd3e42ab92a16ccb5acbed8e9b712ba298409497265402157cee1a
 f7d7f8d74c2ebbe9bb80548866f55552000caccc03d3d27033a6b3061520402c6bc255508a59b383f415e067d372c96b654a75c9c5565e0ca63bd72c443469d7
 ```
 
-##### Profiling
+###### Profiling
 
-For a input file with 6400357 records, the execution times are:
+For a input file with 6400357 records (file size 378MB), the execution times on an Intel i5 2.30 GHz machine:
 
-    Hashed 6400357 email addresses in **17.73** seconds using sha256 to ...
-    Hashed 6400357 email addresses in **14.47** seconds using blake2s to ...
-    Hashed 6400357 email addresses in **16.14** seconds using blake2b to ...
+    Hashed 6400357 email addresses in 16.70 seconds using sha1 to ...
+    Hashed 6400357 email addresses in 17.73 seconds using sha256 to ...
+    Hashed 6400357 email addresses in 14.47 seconds using blake2s to ...
+    Hashed 6400357 email addresses in 16.14 seconds using blake2b to ...
 
 ##### Output File
 
@@ -129,9 +130,10 @@ Hashed 3 email addresses in 0.00 seconds using sha1 to /home/example/hashed.file
 The script will output some execution information (line count, time taken and output file name) by default unless the `--silent` flag is specified.
 
 ```
-$ python3 hash.py --hash sha1 --out hashed.file --silent test.csv 
+$ python3 hash.py --hash sha1 --output hashed.file --silent test.csv
 The output file hashed.file exists and will be overwritten.
 Proceed? (type yes or no): yes
 ```
+##### CSV File Format
 
-If you pass a *bad* CSV file with the missing `email` column, the script will just quit. Please fix the CSV file and run the script again.
+If you pass a *bad* CSV file with the missing `email` column, the script will just quit. Please fix the CSV file and run the script again. Refer to the CSV file example above for a sample input file.
