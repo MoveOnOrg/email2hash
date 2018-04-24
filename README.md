@@ -1,4 +1,4 @@
-# hash.py: read a CSV file and hash the email addresses
+# email2hash.py: read a CSV file and hash the email addresses
 
 ### Introduction
 This script reads a CSV file, hashes the email addresses using the SHA3-256 cryptographic hash function and outputs those hashes to a file.
@@ -19,10 +19,10 @@ id,first_name,last_name,email,ip_address
 2,John,Anon,anon@john.com,127.203.216.121
 3,Bill,Smith,bill@smith.com,210.220.149.121
 ```
-Run `hash.py` on the `email_list.csv`:
+Run `email2hash.py` on the `email_list.csv`:
 
 ```
-$ python3 hash.py email_list.csv 
+$ python3 email2hash.py email_list.csv
 Hashed 3 email addresses in 0.00 seconds using SHA3-256 to /home/example/email_list.hashed
 ```
 ```
@@ -37,8 +37,8 @@ de58838bf66241155f307ad1fa7da3a5ce0bffede555ae4bf90a385b4e9c9d56
 For all supported options, run the script with `-h`:
 
 ```
-$ python3 hash.py -h
-usage: hash.py [-h] [-o hash-file] [--silent] csv-file
+$ python3 email2hash.py -h
+usage: email2hash.py [-h] [-o hash-file] [--silent] csv-file
 
 Read a CSV file and hash the email addresses.
 
@@ -65,7 +65,7 @@ For an input file (378MB) with 6400360 records, the execution times on an Intel 
 By default, the output file name will be the name of the input file with the `.hashed` extension. To change that, use the `-o` or `--output` argument:
 
 ```
-$ python3 hash.py --output /path/to/hashed_list.csv email_list.csv
+$ python3 email2hash.py --output /path/to/hashed_list.csv email_list.csv
 Hashed 3 email addresses in 0.00 seconds using SHA3-256 to /path/to/hashed_list.csv
 ```
 
@@ -74,7 +74,7 @@ Hashed 3 email addresses in 0.00 seconds using SHA3-256 to /path/to/hashed_list.
 The script will output some execution information (line count, time taken and output file name) by default unless the `--silent` flag is specified.
 
 ```
-$ python3 hash.py --output hashed.file --silent test.csv
+$ python3 email2hash.py --output hashed.file --silent test.csv
 The output file hashed.file exists and will be overwritten.
 Proceed? (type yes or no): yes
 ```

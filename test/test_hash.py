@@ -4,7 +4,7 @@ import filecmp
 import unittest
 import argparse
 
-from hash import hash_email, parse_args
+from email2hash import hash_email, parse_args
 
 TEST_CSV = """id,first_name,last_name,email,ip_address
 1,John,Doe,john@doe.com,127.233.246.121
