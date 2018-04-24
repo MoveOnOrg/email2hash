@@ -11,20 +11,22 @@ Python 3. No external libraries required.
 
 ### Usage
 
-#### 1.Simple Usage
-Assume a CSV file `test.csv` with the following contents:
+#### 1. Simple Usage
+Assume a CSV file `email_list.csv` with the following contents:
 ```
 id,first_name,last_name,email,ip_address
 1,John,Doe,john@doe.com,127.233.246.121
 2,John,Anon,anon@john.com,127.203.216.121
 3,Bill,Smith,bill@smith.com,210.220.149.121
 ```
-Run `hash.py` on the `test.csv`:
+Run `hash.py` on the `email_list.csv`:
 
 ```
-$ python3 hash.py test.csv 
-Hashed 3 email addresses in 0.00 seconds using SHA3-256 to /home/example/test.hashed
-$ cat test.hashed 
+$ python3 hash.py email_list.csv 
+Hashed 3 email addresses in 0.00 seconds using SHA3-256 to /home/example/email_list.hashed
+```
+```
+$ cat email_list.hashed 
 d3f44b5afda8361accde657bea3f982c022ceb37fdf0b43fe284f68bce2a0b9d
 aaf5d07b496c9c2c71ef2c399b45b1d89e409f9fa6e51debb7bd0cc1be9793e6
 de58838bf66241155f307ad1fa7da3a5ce0bffede555ae4bf90a385b4e9c9d56
@@ -63,8 +65,8 @@ For an input file (378MB) with 6400360 records, the execution times on an Intel 
 By default, the output file name will be the name of the input file with the `.hashed` extension. To change that, use the `-o` or `--output` argument:
 
 ```
-$ python3 hash.py --output hashed.file test.csv
-Hashed 3 email addresses in 0.00 seconds using SHA3-256 to /home/example/hashed.file
+$ python3 hash.py --output /path/to/hashed_list.csv email_list.csv
+Hashed 3 email addresses in 0.00 seconds using SHA3-256 to /path/to/hashed_list.csv
 ```
 
 ##### Verbosity
