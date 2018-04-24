@@ -79,3 +79,16 @@ Proceed? (type yes or no): yes
 ##### CSV File Format
 
 If you pass a *bad* CSV file with the missing `email` column, the script will just quit. Please fix the CSV file and run the script again. Refer to the CSV file example above for a sample input file.
+
+##### Developers: Testing
+
+There is only one test currently and that simply generates a hash file and compares it with an existing one. To run it,
+
+```
+python3 -m unittest discover test
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+OK
+```
