@@ -23,8 +23,9 @@ Run `email2hash.py` on the `email_list.csv`:
 
 ```
 $ python3 email2hash.py email_list.csv
-Hashed 3 email addresses in 0.00 seconds using SHA3-256 to /home/example/email_list_hashed.csv
+Hashed 3 email addresses in 0.00 seconds using SHA3-256 to /path/to/email_list_hashed.csv
 ```
+To check the output:
 ```
 $ cat email_list_hashed.csv
 d3f44b5afda8361accde657bea3f982c022ceb37fdf0b43fe284f68bce2a0b9d
@@ -75,14 +76,12 @@ The script will output some execution information (line count, time taken and ou
 
 ```
 $ python3 email2hash.py --output hashed.file --silent test.csv
-The output file hashed.file exists and will be overwritten.
-Proceed? (type yes or no): yes
 ```
 ##### CSV File Format
 
 If you pass a *bad* CSV file with the missing `email` column, the script will just quit. Please fix the CSV file and run the script again. Refer to the CSV file example above for a sample input file.
 
-##### Developers: Testing
+### Developers: Testing
 
 There is only one test currently and that simply generates a hash file and compares it with an existing one. To run it,
 
