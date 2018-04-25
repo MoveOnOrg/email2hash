@@ -23,7 +23,7 @@ def hash_email(args):
 
     # No name given for an output file, so we create our own.
     if not out_file:
-        out_file = "{0}.hashed".format(
+        out_file = "{0}_hashed.csv".format(
                 os.path.splitext(os.path.basename(in_file))[0])
 
     # Check if the output file exists and prompt the user.

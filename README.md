@@ -23,10 +23,10 @@ Run `email2hash.py` on the `email_list.csv`:
 
 ```
 $ python3 email2hash.py email_list.csv
-Hashed 3 email addresses in 0.00 seconds using SHA3-256 to /home/example/email_list.hashed
+Hashed 3 email addresses in 0.00 seconds using SHA3-256 to /home/example/email_list_hashed.csv
 ```
 ```
-$ cat email_list.hashed 
+$ cat email_list_hashed.csv
 d3f44b5afda8361accde657bea3f982c022ceb37fdf0b43fe284f68bce2a0b9d
 aaf5d07b496c9c2c71ef2c399b45b1d89e409f9fa6e51debb7bd0cc1be9793e6
 de58838bf66241155f307ad1fa7da3a5ce0bffede555ae4bf90a385b4e9c9d56
@@ -62,7 +62,7 @@ For an input file (378MB) with 6400360 records, the execution times on an Intel 
 
 ##### Output File
 
-By default, the output file name will be the name of the input file with the `.hashed` extension. To change that, use the `-o` or `--output` argument:
+By default, the output file name will be the name of the input file with `_hashed` added to it; so if the input file is `email_list.csv`, the output file will be `email_list_hashed.csv`. To change that, use the `-o` or `--output` argument:
 
 ```
 $ python3 email2hash.py --output /path/to/hashed_list.csv email_list.csv
