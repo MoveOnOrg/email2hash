@@ -11,6 +11,7 @@ output file name) by default unless the --silent flag is specified.
 import os
 import sys
 import time
+import zipfile
 import hashlib
 import argparse
 
@@ -25,13 +26,16 @@ def hash_email(args):
     if not out_file:
         in_file_name = os.path.splitext(os.path.basename(in_file))
         out_file = "{0}_hashed{1}".format(in_file_name[0], in_file_name[1])
+        if args.compress:
+            out_file_zip = "{0}_hashed{1}".format(in_file_name[0], ".zip")
 
     # Check if the output file exists and prompt the user. Do not prompt if
     # the --silent argument was passed and silently override.
     if not args.silent:
-        if os.path.isfile(out_file):
+        output_file = out_file_zip if args.compress else out_file
+        if os.path.isfile(output_file):
             answer = input("The output file {0} exists and will be overwritten"
-                           "\nProceed? (type yes or no): ".format(out_file))
+                           "\nProceed? (type yes or no): ".format(output_file))
             if answer not in ("yes", "y"):
                 sys.exit()
 
@@ -67,13 +71,18 @@ def hash_email(args):
         for email in hashed_emails:
             f.write("{0}\n".format(email))
 
+    # If --compress was passed, compress the output file using ZIP.
+    if args.compress:
+        with zipfile.ZipFile(out_file_zip, 'w', zipfile.ZIP_DEFLATED) as fzip:
+            fzip.write(out_file)
+
     # End of execution.
     end_time = time.time()
 
     if not args.silent:
         print("Hashed {0} email addresses in {1:0.2f} seconds using {2} "
-              "to {3}".format(index, end_time - start_time, "SHA3-256",
-                              os.path.abspath(out_file)))
+              "to {3}".format(index, end_time - start_time,
+                              "SHA3-256", output_file))
 
 
 def parse_args():
@@ -89,6 +98,11 @@ def parse_args():
             "-o", "--output",
             metavar="hash-file",
             help="output file with hashed email addresses"
+            )
+    parser.add_argument(
+            "--compress",
+            action="store_true",
+            help="compress the output file (ZIP)"
             )
     parser.add_argument(
             "--silent",

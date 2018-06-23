@@ -21,6 +21,7 @@ class TestHash(unittest.TestCase):
         self.parser.add_argument("file")
         self.parser.add_argument("--output")
         self.parser.add_argument("--silent", action="store_true")
+        self.parser.add_argument("--compress")
 
         self.file = os.path.dirname(__file__)
 
