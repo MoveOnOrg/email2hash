@@ -35,8 +35,9 @@ def hash_email(args):
             if answer not in ("yes", "y"):
                 sys.exit()
 
+    hashed_emails = []
     try:
-        with open(in_file, "r") as f, open(out_file, "w") as out:
+        with open(in_file, "r") as f:
             # The first line is the header. If it is not or if it is missing
             # the email column, we have a CSV file that we don't know how to
             # process, so quit.
@@ -48,17 +49,23 @@ def hash_email(args):
                          "input file {0}".format(os.path.abspath(in_file)))
 
             # We know the position of the email column, so use it to split the
-            # line, hash the email address and save it to the output file.
+            # line, hash the email address and append it to the list.
             # Note that we do not use csvreader and that's by design -- we
             # don't need the overhead and it performs a lot worse.
             for index, line in enumerate(f, 1):
                 email = line.split(",")[email_index].strip()
                 email_hash = hashlib.sha3_256()
                 email_hash.update(email.encode("utf-8"))
-                out.write(email_hash.hexdigest() + "\n")
+                hashed_emails.append(email_hash.hexdigest())
     except IOError:
         sys.exit("File {0} not found. "
                  "Please check the file path.".format(in_file))
+
+    # Sort the list and write it to the file.
+    hashed_emails.sort()
+    with open(out_file, "w") as f:
+        for email in hashed_emails:
+            f.write("{0}\n".format(email))
 
     # End of execution.
     end_time = time.time()
