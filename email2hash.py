@@ -26,12 +26,14 @@ def hash_email(args):
         in_file_name = os.path.splitext(os.path.basename(in_file))
         out_file = "{0}_hashed{1}".format(in_file_name[0], in_file_name[1])
 
-    # Check if the output file exists and prompt the user.
-    if os.path.isfile(out_file):
-        answer = input("The output file {0} exists and will be overwritten.\n"
-                       "Proceed? (type yes or no): ".format(out_file))
-        if answer not in ("yes", "y"):
-            sys.exit()
+    # Check if the output file exists and prompt the user. Do not prompt if
+    # the --silent argument was passed and silently override.
+    if not args.silent:
+        if os.path.isfile(out_file):
+            answer = input("The output file {0} exists and will be overwritten"
+                           "\nProceed? (type yes or no): ".format(out_file))
+            if answer not in ("yes", "y"):
+                sys.exit()
 
     try:
         with open(in_file, "r") as f, open(out_file, "w") as out:
