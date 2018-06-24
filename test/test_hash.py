@@ -22,15 +22,14 @@ class TestHash(unittest.TestCase):
     def setUp(self):
         self.parser = argparse.ArgumentParser()
         self.parser.add_argument("file")
-        self.parser.add_argument("--output")
         self.parser.add_argument("--silent", action="store_true")
         self.parser.add_argument("--compress")
 
         self.file = os.path.dirname(__file__)
 
-        self.test_input = os.path.join(self.file, "test_csv.csv")
-        self.test_input_hashed = os.path.join(self.file, "test_csv.hashed")
-        self.test_base_csv = os.path.join(self.file, "test_csv.test")
+        self.test_input = os.path.join(self.file, "testfile.csv")
+        self.test_input_hashed = os.path.join(self.file, "testfile_hashed.csv")
+        self.test_base_csv = os.path.join(self.file, "test_hashed.csv")
 
         with open(self.test_input, "w") as f:
             f.write(TEST_CSV)
@@ -39,9 +38,8 @@ class TestHash(unittest.TestCase):
     def test_simple_csv(self, secret):
         # Do not use this secret; set your own by running email2hash.py
         secret.return_value = "a really long secret"
-        hash_email(self.parser.parse_args(["--output",
-                                           self.test_input_hashed,
-                                           self.test_input, "--silent"]))
+        os.chdir("test")
+        hash_email(self.parser.parse_args([self.test_input, "--silent"]))
         self.assertTrue(filecmp.cmp(self.test_input_hashed,
                                     self.test_base_csv))
 

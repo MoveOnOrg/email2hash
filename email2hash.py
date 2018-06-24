@@ -38,22 +38,20 @@ def get_secret():
 
 
 def hash_email(args):
-    in_file, out_file = args.file, args.output
+    in_file = args.file
 
     # We note the executation start time; this is helpful for profiling.
     start_time = time.time()
 
-    # No name given for an output file, so we create our own.
-    if not out_file:
-        in_file_name = os.path.splitext(os.path.basename(in_file))
-        out_file = "{0}_hashed{1}".format(in_file_name[0], in_file_name[1])
-        if args.compress:
-            out_file_zip = "{0}_hashed{1}".format(in_file_name[0], ".zip")
+    in_file_name = os.path.splitext(os.path.basename(in_file))
+    out_file = "{0}_hashed{1}".format(in_file_name[0], in_file_name[1])
+    if args.compress:
+        out_file_zip = "{0}_hashed{1}".format(in_file_name[0], ".zip")
+    output_file = out_file_zip if args.compress else out_file
 
     # Check if the output file exists and prompt the user. Do not prompt if
     # the --silent argument was passed and silently override.
     if not args.silent:
-        output_file = out_file_zip if args.compress else out_file
         if os.path.isfile(output_file):
             answer = input("The output file {0} exists and will be overwritten"
                            "\nProceed? (type yes or no): ".format(output_file))
@@ -120,11 +118,6 @@ def parse_args():
             "file",
             metavar="csv-file",
             help="input csv file with email addresses"
-            )
-    parser.add_argument(
-            "-o", "--output",
-            metavar="hash-file",
-            help="output file with hashed email addresses"
             )
     parser.add_argument(
             "--compress",
