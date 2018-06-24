@@ -43,6 +43,9 @@ def hash_email(args):
     # We note the executation start time; this is helpful for profiling.
     start_time = time.time()
 
+    # out_file refers to the name of the output file with _hashed added to it.
+    # out_file_zip refers to the name of the ZIP file.
+    # output_file decides which file to output, CSV or ZIP.
     in_file_name = os.path.splitext(os.path.basename(in_file))
     out_file = "{0}_hashed{1}".format(in_file_name[0], in_file_name[1])
     if args.compress:
@@ -58,6 +61,7 @@ def hash_email(args):
             if answer not in ("yes", "y"):
                 sys.exit()
 
+    # Input the secret key from the user.
     secret = get_secret()
 
     if not args.silent:
