@@ -62,6 +62,9 @@ def hash_email(args):
 
     secret = get_secret()
 
+    if not args.silent:
+        print("Please wait, hashing email addresses. This may take a while...")
+
     hashed_emails = []
     try:
         with open(in_file, "r") as f:
@@ -126,7 +129,7 @@ def parse_args():
     parser.add_argument(
             "--compress",
             action="store_true",
-            help="compress the output file (ZIP)"
+            help="compress the output file (create a ZIP archive)"
             )
     parser.add_argument(
             "--silent",
