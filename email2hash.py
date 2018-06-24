@@ -24,6 +24,11 @@ def get_secret():
         if not secret:
             print("! I need a secret to continue.")
             continue
+        # This is arbitrary; ideally the length should be at least 32 bytes
+        # but we need to enforce a number.
+        if len(secret) < 10:
+            print("! Please choose a secret longer than 10 characters.")
+            continue
         confirm = getpass.getpass("Enter the same key again to confirm: ")
         if not secret == confirm:
             print("! Your secret key did not match. Let's try again.")
