@@ -2,18 +2,34 @@
 
 """Read a CSV file and hash the email addresses.
 
-This script reads a CSV file, hashes the email addresses using a cryptographic
-hash function (SHA3-256) and then outputs the hashes to another file.  The
-script will output some execution information (line count, time taken and
-output file name) by default unless the --silent flag is specified.
+This script reads a CSV file, hashes the email addresses using an HMAC
+(SHA3-256) and then outputs the hashes to another file.  The script will
+output some execution information (line count, time taken and output file
+name) by default unless the --silent flag is specified.
 """
 
 import os
 import sys
 import time
+import hmac
+import getpass
 import zipfile
 import hashlib
 import argparse
+
+
+def get_secret():
+    while True:
+        secret = getpass.getpass("Enter the secret key: ")
+        if not secret:
+            print("! I need a secret to continue.")
+            continue
+        confirm = getpass.getpass("Enter the same key again to confirm: ")
+        if not secret == confirm:
+            print("! Your secret key did not match. Let's try again.")
+            continue
+        break
+    return secret
 
 
 def hash_email(args):
@@ -39,6 +55,8 @@ def hash_email(args):
             if answer not in ("yes", "y"):
                 sys.exit()
 
+    secret = get_secret()
+
     hashed_emails = []
     try:
         with open(in_file, "r") as f:
@@ -58,8 +76,9 @@ def hash_email(args):
             # don't need the overhead and it performs a lot worse.
             for index, line in enumerate(f, 1):
                 email = line.split(",")[email_index].strip()
-                email_hash = hashlib.sha3_256()
-                email_hash.update(email.encode("utf-8"))
+                email_hash = hmac.new(secret.encode("utf-8"),
+                                      email.encode("utf-8"),
+                                      hashlib.sha3_256)
                 hashed_emails.append(email_hash.hexdigest())
     except IOError:
         sys.exit("File {0} not found. "
@@ -82,7 +101,7 @@ def hash_email(args):
     if not args.silent:
         print("Hashed {0} email addresses in {1:0.2f} seconds using {2} "
               "to {3}".format(index, end_time - start_time,
-                              "SHA3-256", output_file))
+                              "HMAC (SHA3-256)", output_file))
 
 
 def parse_args():

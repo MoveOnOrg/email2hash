@@ -1,10 +1,13 @@
 import os
 import sys
+import getpass
 import filecmp
 import unittest
 import argparse
 
-from email2hash import hash_email, parse_args
+from unittest.mock import patch
+
+from email2hash import hash_email, parse_args, get_secret
 
 TEST_CSV = """id,first_name,last_name,email,ip_address
 1,John,Doe,john@doe.com,127.233.246.121
@@ -32,7 +35,10 @@ class TestHash(unittest.TestCase):
         with open(self.test_input, "w") as f:
             f.write(TEST_CSV)
 
-    def test_simple_csv(self):
+    @patch("getpass.getpass")
+    def test_simple_csv(self, secret):
+        # Do not use this secret; set your own by running email2hash.py
+        secret.return_value = "a really long secret"
         hash_email(self.parser.parse_args(["--output",
                                            self.test_input_hashed,
                                            self.test_input, "--silent"]))
