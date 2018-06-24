@@ -1,7 +1,7 @@
 # email2hash.py: read a CSV file and hash the email addresses
 
 ### Introduction
-This script reads a CSV file, hashes the email addresses using the SHA3-256 cryptographic hash function and outputs those hashes to a file.
+This script reads a CSV file, hashes the email addresses using HMAC (SHA3-256) and outputs those hashes to a file.
 
 The input CSV file should have a column with the header `email` in the first row that is used to determine the position of the email column for the subsequent rows. (The script does not make any attempt to guess an email address from a field.)
 
@@ -22,15 +22,18 @@ id,first_name,last_name,email,ip_address
 Run `email2hash.py` on the `email_list.csv`:
 
 ```
-$ python3 email2hash.py email_list.csv
-Hashed 3 email addresses in 0.00 seconds using SHA3-256 to /path/to/email_list_hashed.csv
+$ python3 email2hash.py email_list.csv 
+Enter the secret key:
+Enter the same key again to confirm:
+Please wait, hashing email addresses. This may take a while...
+Hashed 3 email addresses in 5.59 seconds using HMAC (SHA3-256) to email_list_hashed.csv
 ```
-To check the output:
+(Secret in the above example: `this is a secret`)
 ```
 $ cat email_list_hashed.csv
-d3f44b5afda8361accde657bea3f982c022ceb37fdf0b43fe284f68bce2a0b9d
-aaf5d07b496c9c2c71ef2c399b45b1d89e409f9fa6e51debb7bd0cc1be9793e6
-de58838bf66241155f307ad1fa7da3a5ce0bffede555ae4bf90a385b4e9c9d56
+42d66628b7ca816a5558877c3a810f9c55a64a9b53021516884cf10c1228680e
+80523abe9c7220be7848f6eba78ff830d3dfaa0bc9aaa712bcbabf5a12a5537f
+a311fd21ae832bbf1f1d9616c5168befdde75642bf943cc4fd53182ac11f5e41
 ```
 
 #### 2. Advanced Options
@@ -39,35 +42,42 @@ For all supported options, run the script with `-h`:
 
 ```
 $ python3 email2hash.py -h
-usage: email2hash.py [-h] [-o hash-file] [--silent] csv-file
+usage: email2hash.py [-h] [--compress] [--silent] csv-file
 
 Read a CSV file and hash the email addresses.
 
 positional arguments:
-  csv-file              input csv file with email addresses
+  csv-file    input csv file with email addresses
 
 optional arguments:
-  -h, --help            show this help message and exit
-  -o hash-file, --output hash-file
-                        output file with hashed email addresses
-  --silent              run in silent mode
+  -h, --help  show this help message and exit
+  --compress  compress the output file (create a ZIP archive)
+  --silent    run in silent mode
+
 ```
+
+###### Compression
+
+If you pass the `--compress` argument, the script compresses the output file and creates a ZIP archive. This is helpful in saving space and the difference can be substantial depending on the size of the input file.
 
 ###### Profiling
 
 For an input file (378MB) with 6400360 records, the execution times on an Intel i5 2.30 GHz machine:
 
-    Hashed 6400359 email addresses in 16.06 seconds using SHA3-256 to ...
+    Hashed 6400357 email addresses in 58.18 seconds using HMAC (SHA3-256) to email_list_hashed.csv
 
 (6400360 rows minus the first one which has the header.)
 
 ##### Output File
 
-By default, the output file name will be the name of the input file with `_hashed` added to it; so if the input file is `email_list.csv`, the output file will be `email_list_hashed.csv`. To change that, use the `-o` or `--output` argument:
+By default, the output file name will be the name of the input file with `_hashed` added to it; so if the input file is `email_list.csv`, the output file will be `email_list_hashed.csv`. If the `--compress` flag as passed, the output file name will have the name of the input file with `_hashed.zip` added to it.
 
 ```
-$ python3 email2hash.py --output /path/to/hashed_list.csv email_list.csv
-Hashed 3 email addresses in 0.00 seconds using SHA3-256 to /path/to/hashed_list.csv
+$ python3 email2hash.py email_list.csv 
+Hashed 10 email addresses in 4.95 seconds using HMAC (SHA3-256) to email_list_hashed.csv
+
+$ python3 email2hash.py email_list.csv --compress
+Hashed 10 email addresses in 3.48 seconds using HMAC (SHA3-256) to email_list_hashed.zip
 ```
 
 ##### Verbosity
@@ -75,8 +85,15 @@ Hashed 3 email addresses in 0.00 seconds using SHA3-256 to /path/to/hashed_list.
 The script will output some execution information (line count, time taken and output file name) by default unless the `--silent` flag is specified.
 
 ```
-$ python3 email2hash.py --output hashed.file --silent test.csv
+$ python3 email2hash.py email_list.csv --compress --silent
+Enter the secret key: 
+Enter the same key again to confirm: 
 ```
+
+As in the above example, it will still ask you for the secret key because that's required and cannot be inferred from the script.
+
+Note: When running in `--silent`, the script will override any existing output file without confirming.
+
 ##### CSV File Format
 
 If you pass a *bad* CSV file with the missing `email` column, the script will just quit. Please fix the CSV file and run the script again. Refer to the CSV file example above for a sample input file.
