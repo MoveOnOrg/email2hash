@@ -90,7 +90,7 @@ Enter the secret key:
 Enter the same key again to confirm: 
 ```
 
-As in the above example, it will still ask you for the secret key because that's required and cannot be inferred from the script.
+As in the above example, it will still ask you for the secret key because that's required and cannot be inferred from the script arguments.
 
 Note: When running in `--silent`, the script will override any existing output file without confirming.
 
