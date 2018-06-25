@@ -6,6 +6,9 @@ This script reads a CSV file, hashes the email addresses using an HMAC
 (SHA3-256) and then outputs the hashes to another file.  The script will
 output some execution information (line count, time taken and output file
 name) by default unless the --silent flag is specified.
+
+For more information about the design of the script, refer to the
+specifications file email2hash-spec.txt.
 """
 
 import os
