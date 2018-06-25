@@ -1,0 +1,165 @@
+                    email2hash.py Specification
+
+1. Introduction and Motivation
+
+    Organizations store email addresses of their users for communication and
+    record-keeping purposes. This is also one such piece of information that
+    the organization and the user may consider private. Organizations working
+    in a related field (or otherwise related) may need to compare their list
+    of email addresses with each other for overlap of their users without
+    actually revealing the email addresses. To be able to do this securely, we
+    propose a system that hashes the email address using an HMAC so that
+    organizations can compare the lists without revealing the addresses
+    themselves, and also prevent this information from a malicious attacker in
+    the case the lists are leaked.
+
+    This specification outlines the design of such a system -- implemented in
+    Python as a script -- and discusses the assumptions and threat models.
+
+2. Input File
+
+    The script assumes a CSV (comma-separated values) file as input with the
+    list of email addresses. The file MUST have a header with the column name
+    "email" which is used to infer the column for the email addresses. If the
+    file has no such column or the column name is something other than
+    "email", the script will quit. The script reads the first line as the
+    header, infers the email column from that and discards that line, and then
+    processes from the line after that.
+
+    Here is an example of a sample input file:
+
+            first name,last name,email
+            john,doe,john@doe.com
+
+3. Processing
+
+    The script loads the CSV file, identifies the header to get the email
+    column (see 2 above), and then extracts the email address from each row.
+    The script does not make any attempt to guess or infer the email address,
+    nor does it check them for validity.
+
+    The script computes the HMAC (see 4 below) for each email address in the
+    CSV file and saves it to a list. The list is then sorted to make it easier
+    to check for overlap and to hide the information about member activity
+    before being written to disk.
+
+4. Threat Model
+
+    We make certain assumptions about the threat model. We assume that the
+    machines on which the script is run are sufficiently secured and we assume
+    that the OS is not compromised; to that effect, we make no effort to scrub
+    the memory after the script finishes executing. (See Section 6 below for
+    more discussion on this topic.)
+
+    We also assume that the organizations have a secure channel for exchanging
+    secret keys for the comparison of the lists. We do not attempt to enforce
+    the strength of the secret key other than setting a minimum length
+    requirement of 10 characters.
+
+    If an attacker has access to the hashed list, they will still need the
+    secret to check if an email address is in the list or not. But if they get
+    access to the secret, then making that comparison is easy and the script
+    does not prevent against that. (The attacker still cannot reverse the hash
+    to get the address, but they can check if an address is in the list or
+    not.)
+
+5. Cryptographic Operations
+
+    Before processing, the script asks the user to input a secret key. This
+    step MUST make sure that the key is entered as a password and the user
+    enters this key twice to confirm it. The key size SHOULD be at least 32
+    bytes (see RFC 2104; Section 3 Keys). The script enforces this by setting
+    the minimum character length of the secret key to (an "arbitrary" lower
+    bound of) 10. If the secret keys do not match or the length is less than
+    10, the user is asked to input them again.
+
+    The script uses the secret key to calculate an HMAC using SHA3-256. As per
+    RFC 2104, an HMAC is:
+
+        [...] a mechanism for message authentication using cryptographic hash
+        functions.  HMAC can be used with any iterative cryptographic hash
+        function, e.g., MD5, SHA-1, in combination with a secret shared key.
+        The cryptographic strength of HMAC depends on the properties of the
+        underlying hash function.
+
+    Even though an HMAC is used for verifying the integrity of a message, we
+    prefer it over using a plain cryptographic hash function; as an example,
+    while just using SHA1 will be faster and easier, it is trivial to identify
+    if an email address is in the list -- an attacker can just compute the
+    SHA1 of the address and compare it with the list. Using an HMAC (with a
+    secret key) alleviates this problem. (Note that this works under the
+    assumption that the attacker is not aware of the secret key and that's
+    within the assumed threat model in Section 4.)
+
+6. Scrubbing Memory
+
+    One would expect a program like email2hash.py -- which takes input a list
+    of email addresses and then hashes them with a cryptographic hash
+    algorithm (SHA3-256) -- to clear the RAM after its operation. We will
+    attempt to explain why this is difficult with a language like Python, and
+    why it gives a false sense of security even if we could make it work.
+
+6.1. Python Memory Management
+
+    Python does not offer low-level access to the memory and memory management
+    is performed via automatic garbage collection. As per the manual [0],
+
+        It is important to understand that the management of the Python heap
+        is performed by the interpreter itself and that the user has no
+        control over it, even if she regularly manipulates object pointers to
+        memory blocks inside that heap.
+
+    [0] - https://docs.python.org/3/c-api/memory.html
+
+    One may argue the use of the `del` keyword:
+
+        >>> x = 1
+        >>> print(x)
+        1
+        >>> del x
+        >>> print(x)
+        Traceback (most recent call last):
+          File "<stdin>", line 1, in <module>
+        NameError: name 'x' is not defined
+
+    But this just means that `del` will unbind a name from an object but there
+    is ''no'' guarantee that the memory will actually be cleared [1].
+
+        Deletion of a name removes the binding of that name from the local or
+        global namespace, depending on whether the name occurs in a global
+        statement in the same code block. If the name is unbound, a NameError
+        exception will be raised.
+
+    [1] - https://docs.python.org/3/reference/simple_stmts.html#the-del-statement
+
+    In short, there is no way to scrub the memory in Python because the memory
+    is managed by the interpreter and we have no control over it.
+
+6.2. OS Memory
+
+    Coming back to the original argument and even if we assume that we can
+    clear up the memory, it assumes an attack that may not be realistic. If an
+    attacker would want to read the contents of your RAM, they need `root`
+    access (for example, reading the contents of `/proc/pid/maps` on Linux)
+    and if that is the case, the game is already over and clearing the memory
+    of the Python program is not going to be helpful.
+
+6.3. Conclusion
+
+    Worrying about the contents of the RAM is not a realistic attack vector;
+    we should avoid saving plain text to disk and that's the most we can aim
+    for.  Ultimately, the memory access is as safe as allowed by the operating
+    system and any optimization to that effect gives a false sense of
+    security.
+
+7. Improvements and Future Work
+
+    - We need to identify if using an HMAC is the best possible way to
+      approach this problem.
+
+    - We should move away from Python and rewrite this in a systems language,
+      like Rust.
+
+    - If we do stick with Python, we should consider using the multiprocessing
+      module to speed up the operation of the script. We should also make this
+      module available as a library, so that other scripts can import this.
