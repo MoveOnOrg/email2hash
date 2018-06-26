@@ -1,4 +1,7 @@
 #! /usr/bin/env python3
+#
+# BSD 3-Clause License
+# Copyright (c) 2018, 'Layer 8, LLC'. All rights reserved.
 
 """Read a CSV file and hash the email addresses.
 
