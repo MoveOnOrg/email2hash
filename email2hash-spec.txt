@@ -1,4 +1,8 @@
-                    email2hash.py Specification
+Title:    email2hash Specification
+Authors:  Sukhbir Singh and Nima Fatemi
+Status:   Draft
+Date:     June 2018
+=======================================
 
 1. Introduction and Motivation
 
