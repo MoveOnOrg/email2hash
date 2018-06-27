@@ -46,9 +46,6 @@ def get_secret():
 def hash_email(args):
     in_file = args.file
 
-    # We note the executation start time; this is helpful for profiling.
-    start_time = time.time()
-
     # out_file refers to the name of the output file with _hashed added to it.
     # out_file_zip refers to the name of the ZIP file.
     # output_file decides which file to output, CSV or ZIP.
@@ -72,6 +69,9 @@ def hash_email(args):
 
     if not args.silent:
         print("Please wait, hashing email addresses. This may take a while...")
+
+    # We note the executation start time; this is helpful for profiling.
+    start_time = time.time()
 
     hashed_emails = []
     try:
