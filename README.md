@@ -100,13 +100,15 @@ If you pass a *bad* CSV file with the missing `email` column, the script will ju
 
 ### Developers: Testing
 
-There is only one test currently and that simply generates a hash file and compares it with an existing one. To run it,
+We just have two (simple) tests currently that test the functionality of the script:
 
 ```
-python3 -m unittest discover test
-.
+$ python3 -m unittest discover -v test
+test_diceword (test_hash.TestHash) ... ok
+test_simple_csv (test_hash.TestHash) ... ok
+
 ----------------------------------------------------------------------
-Ran 1 test in 0.001s
+Ran 2 tests in 0.005s
 
 OK
 ```
