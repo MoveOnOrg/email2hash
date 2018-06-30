@@ -43,9 +43,10 @@ Date:     June 2018
     nor does it check them for validity.
 
     The script computes the HMAC (see 4 below) for each email address in the
-    CSV file and saves it to a list. The list is then sorted to make it easier
-    to check for overlap and to hide the information about member activity
-    before being written to disk.
+    CSV file and saves it to the output file. To make later comparisons
+    easier, the list prepends the hash with the line number corresponding to
+    the email address so that it's possible to compare the hashed output with
+    the original email list.
 
 4. Threat Model
 

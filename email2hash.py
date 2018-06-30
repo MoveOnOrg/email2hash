@@ -87,9 +87,8 @@ def hash_email(args):
     # We note the executation start time; this is helpful for profiling.
     start_time = time.time()
 
-    hashed_emails = []
     try:
-        with open(in_file, "r") as f:
+        with open(in_file, "r") as f, open(out_file, "w") as out:
             # The first line is the header. If it is not or if it is missing
             # the email column, we have a CSV file that we don't know how to
             # process, so quit.
@@ -101,7 +100,7 @@ def hash_email(args):
                          "input file {0}".format(os.path.abspath(in_file)))
 
             # We know the position of the email column, so use it to split the
-            # line, hash the email address and append it to the list.
+            # line, hash the email address and save it to the output file.
             # Note that we do not use csvreader and that's by design -- we
             # don't need the overhead and it performs a lot worse.
             for index, line in enumerate(f, 1):
@@ -109,16 +108,10 @@ def hash_email(args):
                 email_hash = hmac.new(secret.encode("utf-8"),
                                       email.encode("utf-8"),
                                       hashlib.sha3_256)
-                hashed_emails.append(email_hash.hexdigest())
+                out.write("{0},{1}\n".format(index, email_hash.hexdigest()))
     except IOError:
         sys.exit("File {0} not found. "
                  "Please check the file path.".format(in_file))
-
-    # Sort the list and write it to the file.
-    hashed_emails.sort()
-    with open(out_file, "w") as f:
-        for email in hashed_emails:
-            f.write("{0}\n".format(email))
 
     # If --compress was passed, compress the output file using ZIP.
     if args.compress:
