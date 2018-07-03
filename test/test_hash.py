@@ -7,7 +7,7 @@ import argparse
 
 from unittest.mock import patch
 
-from email2hash import hash_email, parse_args, get_secret
+from email2hash import hash_email, parse_args, diceware_word
 
 TEST_CSV = """id,first_name,last_name,email,ip_address
 1,John,Doe,john@doe.com,127.233.246.121
@@ -19,7 +19,8 @@ TEST_CSV = """id,first_name,last_name,email,ip_address
 
 
 class TestHash(unittest.TestCase):
-    def setUp(self):
+    @patch("getpass.getpass")
+    def test_simple_csv(self, secret):
         self.parser = argparse.ArgumentParser()
         self.parser.add_argument("file")
         self.parser.add_argument("--silent", action="store_true")
@@ -34,18 +35,20 @@ class TestHash(unittest.TestCase):
         with open(self.test_input, "w") as f:
             f.write(TEST_CSV)
 
-    @patch("getpass.getpass")
-    def test_simple_csv(self, secret):
         # Do not use this secret; set your own by running email2hash.py
         secret.return_value = "a really long secret"
         os.chdir("test")
         hash_email(self.parser.parse_args([self.test_input, "--silent"]))
         self.assertTrue(filecmp.cmp(self.test_input_hashed,
                                     self.test_base_csv))
-
-    def tearDown(self):
         os.remove(self.test_input)
         os.remove(self.test_input_hashed)
+
+    def test_diceword(self):
+        self.words = diceware_word().split()
+        self.word_list = ["overcrowd", "ladle", "disdain", "falcon", "varsity"]
+        self.assertEqual(len(self.word_list), len(self.words),
+                         msg="Diceware word list returned unequal word length")
 
 
 if __name__ == "__main__":
